@@ -13,3 +13,9 @@ export interface UserItem {
 export interface CreateBoardPayload {
     title: string
   }
+
+export interface BoardItem {
+  boardId: string
+  title: string
+  createdAt: string
+}
