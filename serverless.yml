@@ -11,7 +11,9 @@ provider:
   environment: 
     USER_REG_TOPIC: user-registration-topic
     USERS_TABLE: Users
+    BOARDS_TABLE: Boards
     AWS_ACCOUNT_ID: ${aws:accountId}
+    QUEUE_NAME: BoardCreationQueue
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -21,6 +23,7 @@ provider:
       Resource:
         - arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.USER_REG_TOPIC}
         - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.USERS_TABLE}
+        - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.BOARDS_TABLE}
 
 
 
@@ -37,6 +40,22 @@ resources:
         KeySchema:
           - AttributeName: email
             KeyType: HASH
+    boardsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.BOARDS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: boardId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: boardId
+            KeyType: HASH
+
+    BoardCreationQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+          QueueName: ${self:provider.environment.QUEUE_NAME}
 
 functions:
   registerUser:
@@ -56,3 +75,25 @@ functions:
       - httpApi:
           method: GET
           path: /user/{email}
+
+
+  listBoards:
+    handler: src/listBoards.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /boards
+  postBoards:
+    handler: src/postBoards.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /boards
+  handleBoardCreation:
+    handler: src/handleBoardCreation.handler
+    events:
+      - sqs:
+          arn: 
+            Fn::GetAtt:
+              - BoardCreationQueue
+              - Arn
