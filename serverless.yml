@@ -14,16 +14,22 @@ provider:
     BOARDS_TABLE: Boards
     AWS_ACCOUNT_ID: ${aws:accountId}
     QUEUE_NAME: BoardCreationQueue
+    BOARD_QUEUE_URL: 
+      Fn::GetAtt:
+        - BoardCreationQueue
+        - QueueUrl
   iamRoleStatements:
     - Effect: Allow
       Action:
         - sns:Publish
         - dynamodb:PutItem
-        - dynamodb:GetItem    
+        - dynamodb:GetItem
+        - sqs:SendMessage     
       Resource:
         - arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.USER_REG_TOPIC}
         - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.USERS_TABLE}
         - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.BOARDS_TABLE}
+        - arn:aws:sqs:${aws:region}:${aws:accountId}:${self:provider.environment.QUEUE_NAME}
 
 
 

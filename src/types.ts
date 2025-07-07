@@ -9,3 +9,7 @@ export interface UserItem {
     email: string;
     createdAt: string;
 }
+
+export interface CreateBoardPayload {
+    title: string
+  }
