@@ -24,6 +24,7 @@ provider:
         - sns:Publish
         - dynamodb:PutItem
         - dynamodb:GetItem
+        - dynamodb:Scan 
         - sqs:SendMessage     
       Resource:
         - arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.USER_REG_TOPIC}
