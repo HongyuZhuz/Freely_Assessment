@@ -30,7 +30,7 @@ functions:
     handler: src/registerUser.handler
     events:
       - httpApi:
-          method: GET
+          method: POST
           path: /register
   handleUserRegistration:
     handler: src/handleUserRegistration.handler
