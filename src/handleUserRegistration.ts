@@ -31,6 +31,7 @@ export const handler = async (event:SNSEvent) =>{
                 new PutItemCommand({
                     TableName: TABLE_NAME,
                     Item: marshall(newUser),
+                    ConditionExpression:"attribute_not_exists(email)",
                 })
             )
             console.log(`Created user ${userId} (email: ${email}, name:${name})`)
