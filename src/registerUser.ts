@@ -7,8 +7,6 @@ const sns = new SNSClient({})
 const TOPIC_ARN = `arn:aws:sns:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:${process.env.USER_REG_TOPIC}`;
 export const handler:APIGatewayProxyHandler = async (event) =>{
     try{
-        console.log(event.body)
-        console.log(TOPIC_ARN)
         if(!event.body){
             return{statusCode:400, body:'Missing request body'}
         }
