@@ -8,29 +8,37 @@ provider:
   name: aws
   runtime: nodejs20.x
   environment: #use environment variable for future extend
-    USER_REG_TOPIC: ${self.service}-user-registration-topic
+    USER_REG_TOPIC: user-registration-topic
+    USERS_TABLE: Users
 
-functions:
-  hello:
-    handler: handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: USERS_TABLE
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
 
 functions:
   registerUser:
     handler: src/registerUser.handler
     events:
-      - httpApi: 'POST /register'
-  
+      - httpApi:
+          method: GET
+          path: /register
   handleUserRegistration:
     handler: src/handleUserRegistration.handler
     events: 
-      -sns: ${self:provider.environment.USER_REG_TOPIC}
-
+      - sns: USER_REG_TOPIC
   getUserByEmail:
     handler: src/getUserByEmail.handler
     events:
-      - httpApi: 'GET user/{email}'
-
+      - httpApi:
+          method: GET
+          path: /user/{email}
