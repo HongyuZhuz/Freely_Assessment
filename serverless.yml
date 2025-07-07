@@ -7,9 +7,19 @@ service: serverless-http-api
 provider:
   name: aws
   runtime: nodejs20.x
+  region: ap-southeast-2 
   environment: #use environment variable for future extend
     USER_REG_TOPIC: user-registration-topic
     USERS_TABLE: Users
+    AWS_ACCOUNT_ID: ${aws:accountId}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource:
+        - arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.USER_REG_TOPIC}
+
+
 
 resources:
   Resources:
