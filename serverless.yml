@@ -16,8 +16,10 @@ provider:
     - Effect: Allow
       Action:
         - sns:Publish
+        - dynamodb:PutItem
       Resource:
         - arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.USER_REG_TOPIC}
+        - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.USERS_TABLE}
 
 
 
