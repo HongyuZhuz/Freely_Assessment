@@ -7,6 +7,8 @@ service: serverless-http-api
 provider:
   name: aws
   runtime: nodejs20.x
+  environment: #use environment variable for future extend
+    USER_REG_TOPIC: ${self.service}-user-registration-topic
 
 functions:
   hello:
@@ -15,3 +17,20 @@ functions:
       - httpApi:
           path: /
           method: get
+
+functions:
+  registerUser:
+    handler: src/registerUser.handler
+    events:
+      - httpApi: 'POST /register'
+  
+  handleUserRegistration:
+    handler: src/handleUserRegistration.handler
+    events: 
+      -sns: ${self:provider.environment.USER_REG_TOPIC}
+
+  getUserByEmail:
+    handler: src/getUserByEmail.handler
+    events:
+      - httpApi: 'GET user/{email}'
+
