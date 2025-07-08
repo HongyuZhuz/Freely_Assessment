@@ -11,15 +11,10 @@ All services are deployed on AWS using the Serverless Framework.
 
 ---
 
-## Architecture Overview
-.
-├── serverless.yml # Infra: API Gateway, Lambdas, DynamoDB, SNS, SQS, IAM
-├── src/
-│ ├── types.ts # shared TS interfaces (UserItem, BoardItem, PostItem, payloads)
-│ ├── registerUser.ts # POST /register → Publish to SNS
-│ ├── handleUserRegistration.ts # SNS → PutItem into Users table
-│ ├── getUserByEmail.ts # GET /user/{email} → GetItem from Users table
-│ ├── listBoards.ts # GET /boards → Scan Boards table
-│ ├── postBoards.ts # POST /boards → SendMessage to SQS queue
-│ ├── handleBoardCreation.ts # SQS → PutItem into Boards table
-└── README.md
+- **Functions** & **Events**  
+  1. **registerUser** (HTTP POST `/register`) → SNS  
+  2. **handleUserRegistration** (SNS subscription) → DynamoDB PutItem  
+  3. **getUserByEmail** (HTTP GET `/user/{email}`) → DynamoDB GetItem  
+  4. **listBoards** (HTTP GET `/boards`) → DynamoDB Scan  
+  5. **postBoards** (HTTP POST `/boards`) → SQS SendMessage  
+  6. **handleBoardCreation** (SQS subscription) → DynamoDB PutItem  
